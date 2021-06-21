@@ -7,7 +7,7 @@ local RNG = Random.new()
 local INPUT_SERVICE = game:GetService("UserInputService")
 
 local APPLICATION_GUI_PARENT = game:GetService("RunService"):IsStudio() and game.Players.LocalPlayer.PlayerGui or game.CoreGui
-local APPLICATION_SIZE = UDim2.new(0, 280, 0, 208)
+local APPLICATION_SIZE = UDim2.new(0, 280, 0, 235)
 local APPLICATION_MINIMIZED = false
 
 local ELEMENT_CONTAINER_EXTRA_PADDING = 0
@@ -851,25 +851,28 @@ local button_PrinterDealer = CreateButton(elements_Container, "", "Printer Deale
 AddPadding(elements_Container, 4, "")
 local button_CleanNearestTrash = CreateButton(elements_Container, "", "Clean Nearest Trash", "Clean")
 
-AddPadding(elements_Container, 17, "Auto")
-local switch_AutoCashier = CreateSwitch(elements_Container, "", "Auto Cashier", false)
+AddPadding(elements_Container, 17, "Auto Cashier")
+local switch_AutoCashierSouvenirs = CreateSwitch(elements_Container, "", "Souvenirs Shop", false)
+local switch_AutoCashierUnknownOwner = CreateSwitch(elements_Container, "", "Unknown Owner Shop", false)
 
 -- Events
 local chatConnection = game:GetService("Chat").Chatted:Connect(function(part, message, color)
-	if switch_AutoCashier.GetValue() == true then
-		message = string.lower(message)
-
-		local objects = workspace.cShopFile["Shop1"].Shop.Objects
+	local objects = nil
+	
+	if switch_AutoCashierSouvenirs.GetValue() == true then
+		objects = workspace.cShopFile["Shop1"].Shop.Objects
+	elseif switch_AutoCashierUnknownOwner.GetValue() == true then
+		objects = workspace.cShopFile["Shop4"].Shop.Objects
+	end
+	
+	if objects then
 		local validObject = nil
-
-		if string.find(message, "thomas") then
-			validObject = objects.Thomas
-		elseif string.find(message, "ammo") then
-			validObject = objects.Ammo
-		elseif string.find(message, "knife") then
-			validObject = objects.Knife
-		elseif string.find(message, "apple") then
-			validObject = objects.Apple
+		
+		for _, v in pairs(objects:GetChildren()) do
+			if string.find(string.lower(message), string.lower(v.Name)) then
+				validObject = v
+				break
+			end
 		end
 
 		if validObject then
