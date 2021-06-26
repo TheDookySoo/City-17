@@ -792,7 +792,7 @@ end
 -- Application Creation
 local applicationGui = CreateGui()
 
-local window = CreateWindow(applicationGui, "City-17", { 300, 220 })
+local window = CreateWindow(applicationGui, "City-17", { 300, 230 })
 local elementsContainer = CreateScrollingFrame(window.GetBackground(), UDim2.new(1, 0, 1, -20), UDim2.new(0, 0, 0, 20), nil, 0, 0)
 
 local folder_Proximity_Prompts   = CreateFolder(elementsContainer, "Proximity Prompts")
@@ -801,8 +801,12 @@ local button_Gun_Dealer_Everyone = CreateButton(folder_Proximity_Prompts, "Gun D
 local button_Gun_Dealer_Rebel    = CreateButton(folder_Proximity_Prompts, "Gun Dealer Rebel", "Access")
 local button_Gun_Dealer          = CreateButton(folder_Proximity_Prompts, "Gun Dealer", "Access")
 local button_Printer_Dealer      = CreateButton(folder_Proximity_Prompts, "Printer Dealer", "Access")
-CreatePadding(folder_Proximity_Prompts, 4)
-local button_Clean_Nearest_Trash = CreateButton(folder_Proximity_Prompts, "Clean Nearest Trash", "Clean")
+
+local folder_Clean_Trash = CreateFolder(elementsContainer, "Clean Nearest Trash")
+local button_Clean_Trash = CreateButton(folder_Clean_Trash, "Clean Trash", "Clean")
+CreatePadding(folder_Clean_Trash, 4)
+local button_Clean_Trash_Burst = CreateButton(folder_Clean_Trash, "Clean Trash Burst", "Clean")
+local input_Clean_Trash_Burst_Count = CreateInput(folder_Clean_Trash, "Burst Count", 10)
 
 local folder_Auto_Cashier   = CreateFolder(elementsContainer, "Auto Cashier")
 local switch_Auto_Cashier_Souvenirs = CreateSwitch(folder_Auto_Cashier, "Souvenirs Shop", false)
@@ -901,7 +905,7 @@ local function Process(deltaTime)
 		end
 
 
-		for i = 1, button_Clean_Nearest_Trash.GetPressCount() do
+		for i = 1, button_Clean_Trash.GetPressCount() do
 			for _, v in pairs(workspace.TrashFolder:GetChildren()) do
 				if v:IsA("BasePart") then
 					local prompt = v:FindFirstChild("trashprompt")
@@ -909,6 +913,22 @@ local function Process(deltaTime)
 					if prompt then
 						if prompt:IsA("ProximityPrompt") then
 							fireproximityprompt(prompt, 0)
+						end
+					end
+				end
+			end
+		end
+		
+		if button_Clean_Trash_Burst.GetPressCount() > 0 then
+			for i = 1, input_Clean_Trash_Burst_Count.GetInputTextAsNumber() do
+				for _, v in pairs(workspace.TrashFolder:GetChildren()) do
+					if v:IsA("BasePart") then
+						local prompt = v:FindFirstChild("trashprompt")
+
+						if prompt then
+							if prompt:IsA("ProximityPrompt") then
+								fireproximityprompt(prompt, 0)
+							end
 						end
 					end
 				end
