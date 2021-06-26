@@ -628,6 +628,9 @@ local function CreateWindow(parent, title, size)
 			local textWidth = game:GetService("TextService"):GetTextSize(title, 14, THEME.Font_SemiBold, Vector2.new(math.huge, math.huge)).X
 			background.Size = UDim2.new(0, textWidth + 60, 0, 20)
 
+			handleBackground.Visible = false
+			background.ImageColor3 = THEME.Window_Handle_Color
+
 			for _, v in pairs(background:GetChildren()) do
 				if v:IsA("ScrollingFrame") then
 					v.Visible = false
@@ -635,6 +638,9 @@ local function CreateWindow(parent, title, size)
 			end
 		else
 			background.Size = UDim2.new(0, size[1], 0, size[2])
+
+			handleBackground.Visible = true
+			background.ImageColor3 = THEME.Window_Background_Color
 
 			for _, v in pairs(background:GetChildren()) do
 				if v:IsA("ScrollingFrame") then
