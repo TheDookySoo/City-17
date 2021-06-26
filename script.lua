@@ -920,17 +920,25 @@ local function Process(deltaTime)
 		end
 		
 		if button_Clean_Trash_Burst.GetPressCount() > 0 then
-			for i = 1, input_Clean_Trash_Burst_Count.GetInputTextAsNumber() do
-				for _, v in pairs(workspace.TrashFolder:GetChildren()) do
-					if v:IsA("BasePart") then
+			local prompts = {}
+			
+			for _, v in pairs(workspace.TrashFolder:GetChildren()) do
+				if v:IsA("BasePart") then
+					if (v.Position - character:GetPrimaryPartCFrame().Position).Magnitude < 10 then
 						local prompt = v:FindFirstChild("trashprompt")
 
 						if prompt then
 							if prompt:IsA("ProximityPrompt") then
-								fireproximityprompt(prompt, 0)
+								table.insert(prompts, prompt)
 							end
 						end
 					end
+				end
+			end
+			
+			for i = 1, input_Clean_Trash_Burst_Count.GetInputTextAsNumber() do
+				for _, v in pairs(prompts) do
+					fireproximityprompt(v, 0)
 				end
 			end
 		end
