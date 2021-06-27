@@ -801,19 +801,27 @@ local applicationGui = CreateGui()
 local window = CreateWindow(applicationGui, "City-17", { 300, 230 })
 local elementsContainer = CreateScrollingFrame(window.GetBackground(), UDim2.new(1, 0, 1, -20), UDim2.new(0, 0, 0, 20), nil, 0, 0)
 
+-- Proximity Prompts
 local folder_Proximity_Prompts   = CreateFolder(elementsContainer, "Proximity Prompts")
 local button_Vending_Machine     = CreateButton(folder_Proximity_Prompts, "Vending Machine", "Access")
 local button_Gun_Dealer_Everyone = CreateButton(folder_Proximity_Prompts, "Gun Dealer Everyone", "Access")
 local button_Gun_Dealer_Rebel    = CreateButton(folder_Proximity_Prompts, "Gun Dealer Rebel", "Access")
 local button_Gun_Dealer          = CreateButton(folder_Proximity_Prompts, "Gun Dealer", "Access")
-local button_Printer_Dealer      = CreateButton(folder_Proximity_Prompts, "Printer Dealer", "Access")
+local button_Illegal_Dealer      = CreateButton(folder_Proximity_Prompts, "Illegal Dealer", "Access")
 
+-- Touch Interests
+local folder_Touch_Interests = CreateFolder(elementsContainer, "Touch Interests")
+local button_Grant_Green_Card = CreateButton(folder_Touch_Interests, "Grant Green Card", "Grant")
+
+-- Clean Trash
 local folder_Clean_Trash = CreateFolder(elementsContainer, "Clean Nearest Trash")
 local button_Clean_Trash = CreateButton(folder_Clean_Trash, "Clean Trash", "Clean")
+
 CreatePadding(folder_Clean_Trash, 4)
 local button_Clean_Trash_Burst = CreateButton(folder_Clean_Trash, "Clean Trash Burst", "Clean")
 local input_Clean_Trash_Burst_Count = CreateInput(folder_Clean_Trash, "Burst Count", 10)
 
+-- Auto Cashier
 local folder_Auto_Cashier   = CreateFolder(elementsContainer, "Auto Cashier")
 local switch_Auto_Cashier_Souvenirs = CreateSwitch(folder_Auto_Cashier, "Souvenirs Shop", false)
 local switch_Auto_Cashier_Unknown_Owner = CreateSwitch(folder_Auto_Cashier, "Unknown Owner Shop", false)
@@ -906,7 +914,7 @@ local function Process(deltaTime)
 			fireproximityprompt(workspace["gun_dealer"].HumanoidRootPart.ProximityPrompt)
 		end
 
-		if button_Printer_Dealer.GetPressCount() > 0 then
+		if button_Illegal_Dealer.GetPressCount() > 0 then
 			fireproximityprompt(workspace["printer_dealer"].HumanoidRootPart.ProximityPrompt)
 		end
 
@@ -949,6 +957,19 @@ local function Process(deltaTime)
 			end
 		end
 	end)
+	
+	-- Touch Interests
+	if button_Grant_Green_Card.GetPressCount() > 0 then
+		pcall(function()
+			firetouchinterest(
+				character.Torso,
+				workspace.Ignore.Grant,
+				0
+			)
+
+			print("Touched.")
+		end)
+	end
 end
 
 -- Bind process function to render step. Priority set to last so we can have control over everything (maybe)
