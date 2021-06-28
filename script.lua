@@ -966,6 +966,14 @@ local function Process(deltaTime)
 				workspace.Ignore.Grant,
 				0
 			)
+			
+			wait(1)
+			
+			firetouchinterest(
+				character.Torso,
+				workspace.citizengranter,
+				0
+			)
 
 			print("Touched.")
 		end)
