@@ -838,98 +838,100 @@ cursor.BackgroundColor3 = Color3.new(1, 1, 1)
 
 -- Weapons
 do
-	local folder_Armory = CreateFolder(elementsContainer, "Armory")
-	
-	local parentFrame = CreateFrame(folder_Armory, UDim2.new(1, 0, 0, 120))
-	parentFrame.ImageTransparency = 1
-	
-	local frame = CreateFrame(parentFrame, UDim2.new(1, -10, 1, 0), UDim2.new(0.5, -2, 0, 0), Vector2.new(0.5, 0), Color3.fromRGB(30, 30, 30), 3)
-	local container = CreateScrollingFrame(frame, UDim2.new(1, 0, 1, 0))
-	
-	local lastPosition = container.CanvasPosition
-	
-	local function Refresh()
-		pcall(function()
-			for _, v in pairs(container:GetChildren()) do
-				if v:IsA("Frame") then
-					v:Destroy()
+	pcall(function()
+		local folder_Armory = CreateFolder(elementsContainer, "Armory")
+		
+		local parentFrame = CreateFrame(folder_Armory, UDim2.new(1, 0, 0, 120))
+		parentFrame.ImageTransparency = 1
+		
+		local frame = CreateFrame(parentFrame, UDim2.new(1, -10, 1, 0), UDim2.new(0.5, -2, 0, 0), Vector2.new(0.5, 0), Color3.fromRGB(30, 30, 30), 3)
+		local container = CreateScrollingFrame(frame, UDim2.new(1, 0, 1, 0))
+		
+		local lastPosition = container.CanvasPosition
+		
+		local function Refresh()
+			pcall(function()
+				for _, v in pairs(container:GetChildren()) do
+					if v:IsA("Frame") then
+						v:Destroy()
+					end
 				end
-			end
-			
-			local sortList = {}
-			
-			for _, v in pairs(workspace.Weapons:GetChildren()) do
-				if v:IsA("Model") and v:FindFirstChild("ClickDetector") then
-					local basePart = v:FindFirstChildWhichIsA("BasePart")
-					
-					if basePart then
-						local p = basePart.Position
+				
+				local sortList = {}
+				
+				for _, v in pairs(workspace.Weapons:GetChildren()) do
+					if v:IsA("Model") and v:FindFirstChild("ClickDetector") then
+						local basePart = v:FindFirstChildWhichIsA("BasePart")
 						
-						if p.X > -235.96 and p.X < -202.48 and p.Y > 510.62 and p.Y < 525.44 and p.Z > -411.39 and p.Z < -389.05 then
-							table.insert(sortList, v)
+						if basePart then
+							local p = basePart.Position
+							
+							if p.X > -235.96 and p.X < -202.48 and p.Y > 510.62 and p.Y < 525.44 and p.Z > -411.39 and p.Z < -389.05 then
+								table.insert(sortList, v)
+							end
 						end
 					end
 				end
-			end
-			
-			table.sort(sortList, function(a, b)
-				return string.lower(a.Name) < string.lower(b.Name)
-			end)
-			
-			for _, v in pairs(sortList) do
-				local element = Instance.new("Frame", container)
-				element.BackgroundTransparency = 1
-				element.Size = UDim2.new(1, 0, 0, 14)
 				
-				local name = Instance.new("TextButton", element)
-				name.Position = UDim2.new(1, 0, 0, 0)
-				name.Size = UDim2.new(1, -4, 1, 0)
-				name.AnchorPoint = Vector2.new(1, 0)
-				name.BackgroundTransparency = 1
-				name.Font = THEME.Font_SemiBold
-				name.TextColor3 = THEME.Text_Color
-				name.TextXAlignment = Enum.TextXAlignment.Left
-				name.TextSize = 12
-				name.Text = v.Name
-				
-				name.MouseEnter:Connect(function()
-					name.TextColor3 = Color3.fromRGB(90, 150, 255)
+				table.sort(sortList, function(a, b)
+					return string.lower(a.Name) < string.lower(b.Name)
 				end)
 				
-				name.MouseLeave:Connect(function()
+				for _, v in pairs(sortList) do
+					local element = Instance.new("Frame", container)
+					element.BackgroundTransparency = 1
+					element.Size = UDim2.new(1, 0, 0, 14)
+					
+					local name = Instance.new("TextButton", element)
+					name.Position = UDim2.new(1, 0, 0, 0)
+					name.Size = UDim2.new(1, -4, 1, 0)
+					name.AnchorPoint = Vector2.new(1, 0)
+					name.BackgroundTransparency = 1
+					name.Font = THEME.Font_SemiBold
 					name.TextColor3 = THEME.Text_Color
-				end)
-				
-				name.MouseButton1Down:Connect(function()
-					name.TextColor3 = Color3.fromRGB(50, 84, 143)
-				end)
-				
-				name.MouseButton1Up:Connect(function()
-					name.TextColor3 = Color3.fromRGB(90, 150, 255)
-				end)
-				
-				name.MouseButton1Click:Connect(function()
-					pcall(function()
-						fireclickdetector(v.ClickDetector)
+					name.TextXAlignment = Enum.TextXAlignment.Left
+					name.TextSize = 12
+					name.Text = v.Name
+					
+					name.MouseEnter:Connect(function()
+						name.TextColor3 = Color3.fromRGB(90, 150, 255)
 					end)
-				end)
-			end
-		end)
-	end
-	
-	Refresh()
-	
-	for _, v in pairs(workspace.Weapons:GetChildren()) do
-		local basePart = v:FindFirstChildWhichIsA("BasePart")
-
-		if basePart then
-			basePart:GetPropertyChangedSignal("Position"):Connect(function()
-				lastPosition = container.CanvasPosition
-				Refresh()
-				container.CanvasPosition = lastPosition
+					
+					name.MouseLeave:Connect(function()
+						name.TextColor3 = THEME.Text_Color
+					end)
+					
+					name.MouseButton1Down:Connect(function()
+						name.TextColor3 = Color3.fromRGB(50, 84, 143)
+					end)
+					
+					name.MouseButton1Up:Connect(function()
+						name.TextColor3 = Color3.fromRGB(90, 150, 255)
+					end)
+					
+					name.MouseButton1Click:Connect(function()
+						pcall(function()
+							fireclickdetector(v.ClickDetector)
+						end)
+					end)
+				end
 			end)
 		end
-	end
+		
+		Refresh()
+		
+		for _, v in pairs(workspace.Weapons:GetChildren()) do
+			local basePart = v:FindFirstChildWhichIsA("BasePart")
+
+			if basePart then
+				basePart:GetPropertyChangedSignal("Position"):Connect(function()
+					lastPosition = container.CanvasPosition
+					Refresh()
+					container.CanvasPosition = lastPosition
+				end)
+			end
+		end
+	end)
 end
 
 -- Events
