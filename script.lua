@@ -849,70 +849,72 @@ do
 	local lastPosition = container.CanvasPosition
 	
 	local function Refresh()
-		for _, v in pairs(container:GetChildren()) do
-			if v:IsA("Frame") then
-				v:Destroy()
+		pcall(function()
+			for _, v in pairs(container:GetChildren()) do
+				if v:IsA("Frame") then
+					v:Destroy()
+				end
 			end
-		end
-		
-		local sortList = {}
-		
-		for _, v in pairs(workspace.Weapons:GetChildren()) do
-			if v:IsA("Model") and v:FindFirstChild("ClickDetector") then
-				local basePart = v:FindFirstChildWhichIsA("BasePart")
-				
-				if basePart then
-					local p = basePart.Position
+			
+			local sortList = {}
+			
+			for _, v in pairs(workspace.Weapons:GetChildren()) do
+				if v:IsA("Model") and v:FindFirstChild("ClickDetector") then
+					local basePart = v:FindFirstChildWhichIsA("BasePart")
 					
-					if p.X > -235.96 and p.X < -202.48 and p.Y > 510.62 and p.Y < 525.44 and p.Z > -411.39 and p.Z < -389.05 then
-						table.insert(sortList, v)
+					if basePart then
+						local p = basePart.Position
+						
+						if p.X > -235.96 and p.X < -202.48 and p.Y > 510.62 and p.Y < 525.44 and p.Z > -411.39 and p.Z < -389.05 then
+							table.insert(sortList, v)
+						end
 					end
 				end
 			end
-		end
-		
-		table.sort(sortList, function(a, b)
-			return string.lower(a.Name) < string.lower(b.Name)
-		end)
-		
-		for _, v in pairs(sortList) do
-			local element = Instance.new("Frame", container)
-			element.BackgroundTransparency = 1
-			element.Size = UDim2.new(1, 0, 0, 14)
 			
-			local name = Instance.new("TextButton", element)
-			name.Position = UDim2.new(1, 0, 0, 0)
-			name.Size = UDim2.new(1, -4, 1, 0)
-			name.AnchorPoint = Vector2.new(1, 0)
-			name.BackgroundTransparency = 1
-			name.Font = THEME.Font_SemiBold
-			name.TextColor3 = THEME.Text_Color
-			name.TextXAlignment = Enum.TextXAlignment.Left
-			name.TextSize = 12
-			name.Text = v.Name
-			
-			name.MouseEnter:Connect(function()
-				name.TextColor3 = Color3.fromRGB(90, 150, 255)
+			table.sort(sortList, function(a, b)
+				return string.lower(a.Name) < string.lower(b.Name)
 			end)
 			
-			name.MouseLeave:Connect(function()
+			for _, v in pairs(sortList) do
+				local element = Instance.new("Frame", container)
+				element.BackgroundTransparency = 1
+				element.Size = UDim2.new(1, 0, 0, 14)
+				
+				local name = Instance.new("TextButton", element)
+				name.Position = UDim2.new(1, 0, 0, 0)
+				name.Size = UDim2.new(1, -4, 1, 0)
+				name.AnchorPoint = Vector2.new(1, 0)
+				name.BackgroundTransparency = 1
+				name.Font = THEME.Font_SemiBold
 				name.TextColor3 = THEME.Text_Color
-			end)
-			
-			name.MouseButton1Down:Connect(function()
-				name.TextColor3 = Color3.fromRGB(50, 84, 143)
-			end)
-			
-			name.MouseButton1Up:Connect(function()
-				name.TextColor3 = Color3.fromRGB(90, 150, 255)
-			end)
-			
-			name.MouseButton1Click:Connect(function()
-				pcall(function()
-					fireclickdetector(v.ClickDetector)
+				name.TextXAlignment = Enum.TextXAlignment.Left
+				name.TextSize = 12
+				name.Text = v.Name
+				
+				name.MouseEnter:Connect(function()
+					name.TextColor3 = Color3.fromRGB(90, 150, 255)
 				end)
-			end)
-		end
+				
+				name.MouseLeave:Connect(function()
+					name.TextColor3 = THEME.Text_Color
+				end)
+				
+				name.MouseButton1Down:Connect(function()
+					name.TextColor3 = Color3.fromRGB(50, 84, 143)
+				end)
+				
+				name.MouseButton1Up:Connect(function()
+					name.TextColor3 = Color3.fromRGB(90, 150, 255)
+				end)
+				
+				name.MouseButton1Click:Connect(function()
+					pcall(function()
+						fireclickdetector(v.ClickDetector)
+					end)
+				end)
+			end
+		end)
 	end
 	
 	Refresh()
@@ -932,146 +934,150 @@ end
 
 -- Events
 local chatConnection = game:GetService("Chat").Chatted:Connect(function(part, message, color)
-	local objects = nil
+	pcall(function()
+		local objects = nil
 
-	if switch_Auto_Cashier_Souvenirs.On() then
-		objects = workspace.cShopFile["Shop1"].Shop.Objects
-	elseif switch_Auto_Cashier_Unknown_Owner.On() then
-		objects = workspace.cShopFile["Shop4"].Shop.Objects
-	end
-
-	if objects then
-		local validObject = nil
-
-		for _, v in pairs(objects:GetChildren()) do
-			if string.find(string.lower(message), string.lower(v.Name)) then
-				validObject = v
-				break
-			end
+		if switch_Auto_Cashier_Souvenirs.On() then
+			objects = workspace.cShopFile["Shop1"].Shop.Objects
+		elseif switch_Auto_Cashier_Unknown_Owner.On() then
+			objects = workspace.cShopFile["Shop4"].Shop.Objects
 		end
 
-		if validObject then
-			local delayMin = 0.5
-			local delayMax = 1.5
+		if objects then
+			local validObject = nil
 
-			local delayTime = RNG:NextNumber(delayMin, delayMax)
-			wait(delayTime)
+			for _, v in pairs(objects:GetChildren()) do
+				if string.find(string.lower(message), string.lower(v.Name)) then
+					validObject = v
+					break
+				end
+			end
 
-			local clickDetector = validObject:FindFirstChild("ClickDetector")
+			if validObject then
+				local delayMin = 0.5
+				local delayMax = 1.5
 
-			if clickDetector then
-				fireclickdetector(clickDetector)
+				local delayTime = RNG:NextNumber(delayMin, delayMax)
+				wait(delayTime)
+
+				local clickDetector = validObject:FindFirstChild("ClickDetector")
+
+				if clickDetector then
+					fireclickdetector(clickDetector)
+				end
 			end
 		end
-	end
+	end)
 end)
 
 -- Process is called every frame
 local function Process(deltaTime)
-	local camera = workspace.CurrentCamera
-
-	-- Find character and humanoid
-	local character = LOCAL_PLAYER.Character
-	local humanoid = nil
-
-	if character then
-		humanoid = character:FindFirstChild("Humanoid")
-	end
-
-	-- Cursor handling
-	local winPos = window.GetBackground().AbsolutePosition
-	local winSize = window.GetBackground().AbsoluteSize
-
-	cursor.Position = UDim2.new(0, MOUSE.X, 0, MOUSE.Y)
-
-	if MOUSE.X > winPos.X and MOUSE.X < winPos.X + winSize.X and MOUSE.Y > winPos.Y and MOUSE.Y < winPos.Y + winSize.Y then
-		cursor.Visible = true
-	else
-		cursor.Visible = false
-	end
-
-	-- Proximity prompts
 	pcall(function()
-		if button_Vending_Machine.GetPressCount() > 0 then
-			fireproximityprompt(workspace.VendingMachines.VMachine.ProximityPrompt)
+		local camera = workspace.CurrentCamera
+
+		-- Find character and humanoid
+		local character = LOCAL_PLAYER.Character
+		local humanoid = nil
+
+		if character then
+			humanoid = character:FindFirstChild("Humanoid")
 		end
 
-		if button_Gun_Dealer_Everyone.GetPressCount() > 0 then
-			fireproximityprompt(workspace["gun_dealer_everyone"].HumanoidRootPart.ProximityPrompt)
+		-- Cursor handling
+		local winPos = window.GetBackground().AbsolutePosition
+		local winSize = window.GetBackground().AbsoluteSize
+
+		cursor.Position = UDim2.new(0, MOUSE.X, 0, MOUSE.Y)
+
+		if MOUSE.X > winPos.X and MOUSE.X < winPos.X + winSize.X and MOUSE.Y > winPos.Y and MOUSE.Y < winPos.Y + winSize.Y then
+			cursor.Visible = true
+		else
+			cursor.Visible = false
 		end
 
-		if button_Gun_Dealer_Rebel.GetPressCount() > 0 then
-			fireproximityprompt(workspace["gun_dealer_rebel"].HumanoidRootPart.ProximityPrompt)
-		end
-
-		if button_Gun_Dealer.GetPressCount() > 0 then
-			fireproximityprompt(workspace["gun_dealer"].HumanoidRootPart.ProximityPrompt)
-		end
-
-		if button_Illegal_Dealer.GetPressCount() > 0 then
-			fireproximityprompt(workspace["printer_dealer"].HumanoidRootPart.ProximityPrompt)
-		end
-
-
-		for i = 1, button_Clean_Trash.GetPressCount() do
-			for _, v in pairs(workspace.TrashFolder:GetChildren()) do
-				if v:IsA("BasePart") then
-					local prompt = v:FindFirstChild("trashprompt")
-
-					if prompt then
-						if prompt:IsA("ProximityPrompt") then
-							fireproximityprompt(prompt, 0)
-						end
-					end
-				end
+		-- Proximity prompts
+		pcall(function()
+			if button_Vending_Machine.GetPressCount() > 0 then
+				fireproximityprompt(workspace.VendingMachines.VMachine.ProximityPrompt)
 			end
-		end
-		
-		if button_Clean_Trash_Burst.GetPressCount() > 0 then
-			local prompts = {}
-			
-			for _, v in pairs(workspace.TrashFolder:GetChildren()) do
-				if v:IsA("BasePart") then
-					if (v.Position - character:GetPrimaryPartCFrame().Position).Magnitude < 10 then
+
+			if button_Gun_Dealer_Everyone.GetPressCount() > 0 then
+				fireproximityprompt(workspace["gun_dealer_everyone"].HumanoidRootPart.ProximityPrompt)
+			end
+
+			if button_Gun_Dealer_Rebel.GetPressCount() > 0 then
+				fireproximityprompt(workspace["gun_dealer_rebel"].HumanoidRootPart.ProximityPrompt)
+			end
+
+			if button_Gun_Dealer.GetPressCount() > 0 then
+				fireproximityprompt(workspace["gun_dealer"].HumanoidRootPart.ProximityPrompt)
+			end
+
+			if button_Illegal_Dealer.GetPressCount() > 0 then
+				fireproximityprompt(workspace["printer_dealer"].HumanoidRootPart.ProximityPrompt)
+			end
+
+
+			for i = 1, button_Clean_Trash.GetPressCount() do
+				for _, v in pairs(workspace.TrashFolder:GetChildren()) do
+					if v:IsA("BasePart") then
 						local prompt = v:FindFirstChild("trashprompt")
 
 						if prompt then
 							if prompt:IsA("ProximityPrompt") then
-								table.insert(prompts, prompt)
+								fireproximityprompt(prompt, 0)
 							end
 						end
 					end
 				end
 			end
 			
-			for i = 1, input_Clean_Trash_Burst_Count.GetInputTextAsNumber() do
-				for _, v in pairs(prompts) do
-					fireproximityprompt(v, 0)
+			if button_Clean_Trash_Burst.GetPressCount() > 0 then
+				local prompts = {}
+				
+				for _, v in pairs(workspace.TrashFolder:GetChildren()) do
+					if v:IsA("BasePart") then
+						if (v.Position - character:GetPrimaryPartCFrame().Position).Magnitude < 10 then
+							local prompt = v:FindFirstChild("trashprompt")
+
+							if prompt then
+								if prompt:IsA("ProximityPrompt") then
+									table.insert(prompts, prompt)
+								end
+							end
+						end
+					end
+				end
+				
+				for i = 1, input_Clean_Trash_Burst_Count.GetInputTextAsNumber() do
+					for _, v in pairs(prompts) do
+						fireproximityprompt(v, 0)
+					end
 				end
 			end
+		end)
+		
+		-- Touch Interests
+		if button_Grant_Green_Card.GetPressCount() > 0 then
+			pcall(function()
+				firetouchinterest(
+					character.Torso,
+					workspace.Ignore.Grant,
+					0
+				)
+				
+				wait(1)
+				
+				firetouchinterest(
+					character.Torso,
+					workspace.citizengranter,
+					0
+				)
+
+				print("Touched.")
+			end)
 		end
 	end)
-	
-	-- Touch Interests
-	if button_Grant_Green_Card.GetPressCount() > 0 then
-		pcall(function()
-			firetouchinterest(
-				character.Torso,
-				workspace.Ignore.Grant,
-				0
-			)
-			
-			wait(1)
-			
-			firetouchinterest(
-				character.Torso,
-				workspace.citizengranter,
-				0
-			)
-
-			print("Touched.")
-		end)
-	end
 end
 
 -- Bind process function to render step. Priority set to last so we can have control over everything (maybe)
